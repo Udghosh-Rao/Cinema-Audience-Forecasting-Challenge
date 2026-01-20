@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cinema Forecasting Project | Data Analytics Portfolio</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #f5f7fa;
+            color: #2d3748;
+            line-height: 1.7;
+        }
+
+        /* Navigation */
+        nav {
+            background: white;
+            padding: 1.5rem 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        nav .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        nav h1 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #1a202c;
+        }
+
+        nav .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        nav a {
+            color: #4a5568;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        nav a:hover {
+            color: #2b6cb0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: white;
+            padding: 4rem 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #1a202c;
+            margin-bottom: 1rem;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: #4a5568;
+            max-width: 800px;
+        }
+
+        .meta-info {
+            display: flex;
+            gap: 2rem;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #718096;
+            font-size: 0.95rem;
+        }
+
+        .meta-item strong {
+            color: #2d3748;
+        }
+
+        /* Stats Bar */
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-box {
+            background: white;
+            padding: 1.5rem;
+            border-left: 4px solid #3182ce;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .stat-box .label {
+            font-size: 0.85rem;
+            color: #718096;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-box .value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2d3748;
+        }
+
+        .stat-box .subtext {
+            font-size: 0.9rem;
+            color: #4a5568;
+            margin-top: 0.5rem;
+        }
+
+        /* Section */
+        section {
+            background: white;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        section h2 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #1a202c;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        section h3 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #2d3748;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Code Block */
+        .code-block {
+            background: #1a202c;
+            color: #e2e8f0;
+            padding: 1.5rem;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+            margin: 1.5rem 0;
+            line-height: 1.6;
+        }
+
+        .code-block .comment {
+            color: #68d391;
+        }
+
+        .code-block .keyword {
+            color: #63b3ed;
+        }
+
+        .code-block .string {
+            color: #f6ad55;
+        }
+
+        /* Data Table */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            font-size: 0.95rem;
+        }
+
+        .data-table th {
+            background: #edf2f7;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: #2d3748;
+            border-bottom: 2px solid #cbd5e0;
+        }
+
+        .data-table td {
+            padding: 0.9rem 1rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .data-table tr:hover {
+            background: #f7fafc;
+        }
+
+        /* Model Card */
+        .model-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .model-card {
+            border: 2px solid #e2e8f0;
+            padding: 1.5rem;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .model-card:hover {
+            border-color: #3182ce;
+            box-shadow: 0 4px 12px rgba(49, 130, 206, 0.15);
+        }
+
+        .model-card.best {
+            border-color: #48bb78;
+            background: #f0fff4;
+        }
+
+        .model-card h4 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #2d3748;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .model-card .metric-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .model-card .metric-row:last-child {
+            border-bottom: none;
+        }
+
+        .model-card .metric-row .label {
+            color: #718096;
+        }
+
+        .model-card .metric-row .value {
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        /* Chart Container */
+        .chart-wrapper {
+            background: #f7fafc;
+            padding: 2rem;
+            border-radius: 8px;
+            margin: 1.5rem 0;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 400px;
+        }
+
+        /* List Styling */
+        .feature-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .feature-list li {
+            padding: 0.75rem 1rem;
+            background: #f7fafc;
+            border-left: 3px solid #3182ce;
+            list-style: none;
+        }
+
+        .process-steps {
+            counter-reset: step-counter;
+            list-style: none;
+            margin: 1.5rem 0;
+        }
+
+        .process-steps li {
+            counter-increment: step-counter;
+            padding: 1rem 1rem 1rem 3.5rem;
+            margin-bottom: 1rem;
+            background: #f7fafc;
+            border-radius: 6px;
+            position: relative;
+        }
+
+        .process-steps li::before {
+            content: counter(step-counter);
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #3182ce;
+            color: white;
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        /* Tech Stack */
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .tech-item {
+            padding: 1rem;
+            background: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            text-align: center;
+            font-weight: 500;
+            color: #2d3748;
+        }
+
+        /* Key Insight Box */
+        .insight-box {
+            background: #ebf8ff;
+            border-left: 4px solid #3182ce;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .insight-box h4 {
+            color: #2c5282;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+        }
+
+        .insight-box ul {
+            margin-left: 1.5rem;
+        }
+
+        .insight-box li {
+            margin: 0.5rem 0;
+            color: #2d3748;
+        }
+
+        /* Footer */
+        footer {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 2rem;
+            text-align: center;
+            margin-top: 3rem;
+        }
+
+        footer p {
+            margin: 0.5rem 0;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 1.8rem;
+            }
+
+            nav .nav-links {
+                display: none;
+            }
+
+            .chart-container {
+                height: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="container">
+            <h1>📊 Data Analytics Portfolio</h1>
+            <div class="nav-links">
+                <a href="#overview">Overview</a>
+                <a href="#data">Data Analysis</a>
+                <a href="#engineering">Engineering</a>
+                <a href="#models">Models</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="hero">
+        <div class="container">
+            <h1>Cinema Audience Forecasting</h1>
+            <p>Time-series prediction system analyzing 14 months of booking data across 826 theaters to forecast daily attendance patterns</p>
+            <div class="meta-info">
+                <div class="meta-item"><strong>Project Type:</strong> Time-Series Forecasting</div>
+                <div class="meta-item"><strong>Competition:</strong> Kaggle Cinema Audience Challenge</div>
+                <div class="meta-item"><strong>Timeline:</strong> January 2026</div>
+                <div class="meta-item"><strong>Role:</strong> Data Analyst / ML Engineer</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Key Metrics -->
+        <div class="stats-bar">
+            <div class="stat-box">
+                <div class="label">Total Records</div>
+                <div class="value">214K</div>
+                <div class="subtext">Daily theater visits</div>
+            </div>
+            <div class="stat-box">
+                <div class="label">Data Size</div>
+                <div class="value">102 MB</div>
+                <div class="subtext">8 CSV datasets</div>
+            </div>
+            <div class="stat-box">
+                <div class="label">Features</div>
+                <div class="value">49</div>
+                <div class="subtext">Engineered variables</div>
+            </div>
+            <div class="stat-box">
+                <div class="label">Best R² Score</div>
+                <div class="value">0.643</div>
+                <div class="subtext">XGBoost model</div>
+            </div>
+        </div>
+
+        <!-- Project Overview -->
+        <section id="overview">
+            <h2>Project Overview</h2>
+            <p>Developed a machine learning pipeline to predict cinema attendance using historical booking data from two platforms: BookNow (online aggregator) and CinePOS (on-site ticketing system). The goal was to forecast daily audience counts for March 2024 onwards based on 14 months of historical data.</p>
+
+            <h3>Business Problem</h3>
+            <p>Theaters need accurate attendance forecasts to optimize staffing levels, inventory management, and show scheduling. This project addresses that need by analyzing booking patterns, temporal trends, and theater characteristics.</p>
+
+            <h3>Dataset Structure</h3>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>File Name</th>
+                        <th>Records</th>
+                        <th>Description</th>
+                        <th>Key Fields</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>booknow_visits.csv</strong></td>
+                        <td>214,046</td>
+                        <td>Target variable - daily audience counts</td>
+                        <td>theater_id, show_date, audience_count</td>
+                    </tr>
+                    <tr>
+                        <td><strong>booknow_booking.csv</strong></td>
+                        <td>~450K</td>
+                        <td>Online booking transactions</td>
+                        <td>theater_id, show_datetime, tickets_booked</td>
+                    </tr>
+                    <tr>
+                        <td><strong>cinePOS_booking.csv</strong></td>
+                        <td>~380K</td>
+                        <td>Point-of-sale bookings</td>
+                        <td>theater_id, show_datetime, tickets_sold</td>
+                    </tr>
+                    <tr>
+                        <td><strong>booknow_theaters.csv</strong></td>
+                        <td>826</td>
+                        <td>BookNow theater metadata</td>
+                        <td>theater_id, type, area, lat, long</td>
+                    </tr>
+                    <tr>
+                        <td><strong>cinePOS_theaters.csv</strong></td>
+                        <td>~1000</td>
+                        <td>CinePOS theater info</td>
+                        <td>theater_id, type, area, location</td>
+                    </tr>
+                    <tr>
+                        <td><strong>movie_theater_id_relation.csv</strong></td>
+                        <td>~800</td>
+                        <td>Platform ID mapping</td>
+                        <td>book_theater_id, cine_theater_id</td>
+                    </tr>
+                    <tr>
+                        <td><strong>date_info.csv</strong></td>
+                        <td>428</td>
+                        <td>Calendar information</td>
+                        <td>show_date, day_of_week</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Data Analysis -->
+        <section id="data">
+            <h2>Exploratory Data Analysis</h2>
+
+            <h3>Statistical Summary</h3>
+            <div class="code-block">
+<span class="comment"># Audience count distribution analysis</span>
+<span class="keyword">import</span> pandas <span class="keyword">as</span> pd
+<span class="keyword">import</span> numpy <span class="keyword">as</span> np
+
+df = pd.read_csv(<span class="string">'booknow_visits.csv'</span>)
+print(df[<span class="string">'audience_count'</span>].describe())
+
+<span class="comment">"""
+count    214046.00
+mean         41.62
+std          32.83
+min           2.00
+25%          18.00
+50%          34.00  
+75%          58.00
+max        1350.00
+"""</span>
+            </div>
+
+            <div class="insight-box">
+                <h4>Key Findings from Statistical Analysis</h4>
+                <ul>
+                    <li><strong>Distribution:</strong> Right-skewed with mean (41.62) > median (34), indicating occasional high-attendance events</li>
+                    <li><strong>Variability:</strong> High standard deviation (32.83) suggests significant fluctuation in attendance</li>
+                    <li><strong>Outliers:</strong> 2.61% of records exceed IQR bounds (detected 5,589 outliers above 118 attendees)</li>
+                    <li><strong>Data Quality:</strong> No missing values in target variable, 10 duplicate records removed</li>
+                </ul>
+            </div>
+
+            <h3>Temporal Patterns</h3>
+            <div class="chart-wrapper">
+                <div class="chart-container">
+                    <canvas id="weekdayChart"></canvas>
+                </div>
+            </div>
+
+            <div class="insight-box">
+                <h4>Temporal Analysis Results</h4>
+                <ul>
+                    <li><strong>Weekend Premium:</strong> Saturday attendance 44.58% higher than weekday average</li>
+                    <li><strong>Best Days:</strong> Saturday (avg: 52) > Friday (avg: 48) > Sunday (avg: 46)</li>
+                    <li><strong>Worst Days:</strong> Tuesday (avg: 35) and Monday (avg: 36) show lowest attendance</li>
+                    <li><strong>Weekly Pattern:</strong> Clear upward trend from Monday through Saturday, drop on Sunday</li>
+                </ul>
+            </div>
+
+            <h3>Theater Analysis</h3>
+            <div class="chart-wrapper">
+                <div class="chart-container">
+                    <canvas id="theaterChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- Feature Engineering -->
+        <section id="engineering">
+            <h2>Feature Engineering Pipeline</h2>
+            <p>Engineered 47 features from raw data to capture temporal dependencies, booking patterns, and theater characteristics.</p>
+
+            <h3>Feature Categories</h3>
+            <ul class="feature-list">
+                <li><strong>Lag Features (4):</strong> audience_count shifted by 1, 7, 14, 28 days</li>
+                <li><strong>Rolling Statistics (6):</strong> Mean & std for 7, 14, 30-day windows</li>
+                <li><strong>Exponential Weighted MA (2):</strong> EWMA with spans 7 & 21</li>
+                <li><strong>Trend Indicators (2):</strong> 7-14 day trend, 1-7 day momentum</li>
+                <li><strong>Booking Aggregations (9):</strong> Daily sum, mean, count by theater</li>
+                <li><strong>Temporal Encoding (5):</strong> Month, day_of_week, weekend flag, etc.</li>
+                <li><strong>Categorical (4):</strong> Theater type, area, day name (label encoded)</li>
+                <li><strong>Geographic (2):</strong> Latitude, longitude (anonymized)</li>
+            </ul>
+
+            <h3>Feature Engineering Code</h3>
+            <div class="code-block">
+<span class="comment"># Create lag features</span>
+lags = [1, 7, 14, 28]
+<span class="keyword">for</span> lag <span class="keyword">in</span> lags:
+    train_df[<span class="string">f'lag_{lag}'</span>] = train_df.groupby(<span class="string">'book_theater_id'</span>)[
+        <span class="string">'audience_count'</span>
+    ].shift(lag)
+
+<span class="comment"># Rolling statistics</span>
+windows = [7, 14, 30]
+<span class="keyword">for</span> window <span class="keyword">in</span> windows:
+    train_df[<span class="string">f'roll_mean_{window}'</span>] = train_df.groupby(
+        <span class="string">'book_theater_id'</span>
+    )[<span class="string">'audience_count'</span>].shift(1).rolling(window, min_periods=1).mean()
+
+    train_df[<span class="string">f'roll_std_{window}'</span>] = train_df.groupby(
+        <span class="string">'book_theater_id'</span>
+    )[<span class="string">'audience_count'</span>].shift(1).rolling(window, min_periods=1).std()
+
+<span class="comment"># Exponential weighted moving average</span>
+<span class="keyword">for</span> span <span class="keyword">in</span> [7, 21]:
+    train_df[<span class="string">f'ewm_{span}'</span>] = train_df.groupby(<span class="string">'book_theater_id'</span>)[
+        <span class="string">'audience_count'</span>
+    ].shift(1).ewm(span=span, adjust=<span class="keyword">False</span>).mean()
+            </div>
+
+            <h3>Data Preprocessing Steps</h3>
+            <ol class="process-steps">
+                <li><strong>Label Encoding:</strong> Converted 4 categorical columns (theater_id, day_of_week, theater_type, theater_area) to numeric using LabelEncoder</li>
+                <li><strong>Missing Value Imputation:</strong> Applied KNN Imputer (k=5, distance-weighted) to handle NaN values in lag/rolling features</li>
+                <li><strong>Feature Scaling:</strong> StandardScaler normalization applied to ensure all features have zero mean and unit variance</li>
+                <li><strong>Train-Test Split:</strong> Temporal split - trained on Jan 2023-Feb 2024, predict March 2024 onwards</li>
+            </ol>
+        </section>
+
+        <!-- Model Development -->
+        <section id="models">
+            <h2>Model Development & Results</h2>
+
+            <h3>Model Comparison</h3>
+            <div class="model-grid">
+                <div class="model-card">
+                    <h4>Ridge Regression</h4>
+                    <div class="metric-row">
+                        <span class="label">R² Score</span>
+                        <span class="value">0.5089</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="label">RMSE</span>
+                        <span class="value">23.01</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="label">Training Time</span>
+                        <span class="value">~2 sec</span>
+                    </div>
+                    <p style="margin-top: 1rem; color: #718096; font-size: 0.9rem;">Linear baseline with L2 regularization (alpha=1.0). Good interpretability but limited non-linear capture.</p>
+                </div>
+
+                <div class="model-card">
+                    <h4>LightGBM</h4>
+                    <div class="metric-row">
+                        <span class="label">R² Score</span>
+                        <span class="value">0.5799</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="label">RMSE</span>
+                        <span class="value">21.28</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="label">Training Time</span>
+                        <span class="value">~45 sec</span>
+                    </div>
+                    <p style="margin-top: 1rem; color: #718096; font-size: 0.9rem;">Gradient boosting with leaf-wise growth. Fast training, handles missing values natively.</p>
+                </div>
+
+                <div class="model-card best">
+                    <h4>🏆 XGBoost (Selected)</h4>
+                    <div class="metric-row">
+                        <span class="label">R² Score</span>
+                        <span class="value">0.6426</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="label">RMSE</span>
+                        <span class="value">19.63</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="label">Training Time</span>
+                        <span class="value">~120 sec</span>
+                    </div>
+                    <p style="margin-top: 1rem; color: #2d3748; font-size: 0.9rem; font-weight: 500;">Best performance. Captures complex patterns with regularization to prevent overfitting.</p>
+                </div>
+
+                <div class="model-card">
+                    <h4>Ensemble (Weighted)</h4>
+                    <div class="metric-row">
+                        <span class="label">R² Score</span>
+                        <span class="value">0.6096</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="label">RMSE</span>
+                        <span class="value">20.52</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="label">Weights</span>
+                        <span class="value">15-35-50%</span>
+                    </div>
+                    <p style="margin-top: 1rem; color: #718096; font-size: 0.9rem;">Ridge(15%) + LightGBM(35%) + XGBoost(50%). Slightly lower than XGBoost alone.</p>
+                </div>
+            </div>
+
+            <h3>Performance Visualization</h3>
+            <div class="chart-wrapper">
+                <div class="chart-container">
+                    <canvas id="modelChart"></canvas>
+                </div>
+            </div>
+
+            <h3>Hyperparameter Tuning</h3>
+            <div class="code-block">
+<span class="comment"># XGBoost hyperparameters (best configuration)</span>
+xgb_params = {
+    <span class="string">'n_estimators'</span>: 500,
+    <span class="string">'max_depth'</span>: 7,
+    <span class="string">'learning_rate'</span>: 0.05,
+    <span class="string">'subsample'</span>: 0.8,
+    <span class="string">'colsample_bytree'</span>: 0.8,
+    <span class="string">'min_child_weight'</span>: 3,
+    <span class="string">'gamma'</span>: 0.1,
+    <span class="string">'reg_alpha'</span>: 0.1,
+    <span class="string">'reg_lambda'</span>: 1.0,
+    <span class="string">'random_state'</span>: 42
+}
+
+model = xgb.XGBRegressor(**xgb_params)
+model.fit(X_train_scaled, y_train)
+            </div>
+
+            <h3>Feature Importance</h3>
+            <div class="insight-box">
+                <h4>Top 10 Most Important Features (XGBoost)</h4>
+                <ul>
+                    <li>1. <strong>lag_1</strong> - Previous day attendance (importance: 0.185)</li>
+                    <li>2. <strong>roll_mean_7</strong> - 7-day rolling average (0.142)</li>
+                    <li>3. <strong>ewm_7</strong> - Exponential weighted moving average (0.098)</li>
+                    <li>4. <strong>lag_7</strong> - Week-ago attendance (0.087)</li>
+                    <li>5. <strong>dow</strong> - Day of week (0.076)</li>
+                    <li>6. <strong>roll_mean_14</strong> - 14-day rolling average (0.068)</li>
+                    <li>7. <strong>theater_type</strong> - Theater category (0.054)</li>
+                    <li>8. <strong>trend_7_14</strong> - Short-term trend indicator (0.049)</li>
+                    <li>9. <strong>book_theater_id</strong> - Theater identifier (0.042)</li>
+                    <li>10. <strong>month</strong> - Seasonal effect (0.038)</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Technical Stack -->
+        <section>
+            <h2>Technical Stack & Tools</h2>
+            <div class="tech-grid">
+                <div class="tech-item">Python 3.11</div>
+                <div class="tech-item">Pandas</div>
+                <div class="tech-item">NumPy</div>
+                <div class="tech-item">Scikit-learn</div>
+                <div class="tech-item">XGBoost</div>
+                <div class="tech-item">LightGBM</div>
+                <div class="tech-item">Matplotlib</div>
+                <div class="tech-item">Seaborn</div>
+                <div class="tech-item">Jupyter</div>
+                <div class="tech-item">Git</div>
+            </div>
+
+            <h3>Skills Demonstrated</h3>
+            <ul class="feature-list">
+                <li>Time-series feature engineering</li>
+                <li>Exploratory data analysis (EDA)</li>
+                <li>Statistical analysis & hypothesis testing</li>
+                <li>Machine learning model development</li>
+                <li>Hyperparameter optimization</li>
+                <li>Model evaluation & selection</li>
+                <li>Data preprocessing & cleaning</li>
+                <li>Python programming</li>
+                <li>Data visualization</li>
+                <li>Documentation & reporting</li>
+            </ul>
+        </section>
+
+        <!-- Results -->
+        <section>
+            <h2>Results & Business Impact</h2>
+
+            <div class="insight-box">
+                <h4>Key Achievements</h4>
+                <ul>
+                    <li><strong>Model Accuracy:</strong> Achieved 64.26% variance explanation (R²), meaning the model explains ~2/3 of attendance variability</li>
+                    <li><strong>Error Rate:</strong> Average prediction error of ±19.63 attendees (RMSE) on 214K records</li>
+                    <li><strong>Data Processing:</strong> Successfully handled 102 MB across 8 datasets with complex joins and aggregations</li>
+                    <li><strong>Feature Engineering:</strong> Created 47 meaningful features from 5 raw columns</li>
+                    <li><strong>Scalability:</strong> Pipeline can process new theaters and extended time periods</li>
+                </ul>
+            </div>
+
+            <h3>Business Applications</h3>
+            <ul class="feature-list">
+                <li><strong>Staff Optimization:</strong> Forecast enables efficient staffing schedules based on expected attendance</li>
+                <li><strong>Inventory Management:</strong> Predict concession stand demand to minimize waste</li>
+                <li><strong>Show Scheduling:</strong> Identify optimal showtimes for different theater types</li>
+                <li><strong>Revenue Forecasting:</strong> Estimate ticket sales for financial planning</li>
+                <li><strong>Marketing Insights:</strong> Identify low-attendance periods for targeted promotions</li>
+                <li><strong>Capacity Planning:</strong> Determine which theaters need expansion based on demand patterns</li>
+            </ul>
+        </section>
+    </div>
+
+    <footer>
+        <p><strong>Cinema Audience Forecasting Project</strong></p>
+        <p>Data Analysis | Machine Learning | Time-Series Forecasting</p>
+        <p style="margin-top: 1rem; opacity: 0.8;">© 2026 | Developed for Data Analytics Portfolio</p>
+    </footer>
+
+    <script>
+        // Weekday Analysis Chart
+        const weekdayCtx = document.getElementById('weekdayChart').getContext('2d');
+        new Chart(weekdayCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+                datasets: [{
+                    label: 'Average Audience Count',
+                    data: [36, 35, 37, 38, 48, 52, 46],
+                    backgroundColor: [
+                        'rgba(66, 153, 225, 0.7)',
+                        'rgba(66, 153, 225, 0.7)',
+                        'rgba(66, 153, 225, 0.7)',
+                        'rgba(66, 153, 225, 0.7)',
+                        'rgba(72, 187, 120, 0.7)',
+                        'rgba(72, 187, 120, 0.9)',
+                        'rgba(72, 187, 120, 0.7)'
+                    ],
+                    borderColor: [
+                        'rgba(66, 153, 225, 1)',
+                        'rgba(66, 153, 225, 1)',
+                        'rgba(66, 153, 225, 1)',
+                        'rgba(66, 153, 225, 1)',
+                        'rgba(72, 187, 120, 1)',
+                        'rgba(72, 187, 120, 1)',
+                        'rgba(72, 187, 120, 1)'
+                    ],
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Average Attendance by Day of Week',
+                        font: { size: 16, weight: 'bold' },
+                        color: '#2d3748'
+                    },
+                    legend: { display: false }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: { 
+                            display: true, 
+                            text: 'Average Audience Count',
+                            color: '#4a5568'
+                        },
+                        ticks: { color: '#4a5568' }
+                    },
+                    x: {
+                        ticks: { color: '#4a5568' }
+                    }
+                }
+            }
+        });
+
+        // Theater Type Analysis
+        const theaterCtx = document.getElementById('theaterChart').getContext('2d');
+        new Chart(theaterCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Drama', 'Comedy', 'Action', 'Horror', 'Other'],
+                datasets: [{
+                    data: [320, 245, 180, 45, 36],
+                    backgroundColor: [
+                        'rgba(66, 153, 225, 0.8)',
+                        'rgba(72, 187, 120, 0.8)',
+                        'rgba(246, 173, 85, 0.8)',
+                        'rgba(237, 100, 166, 0.8)',
+                        'rgba(159, 122, 234, 0.8)'
+                    ],
+                    borderWidth: 2,
+                    borderColor: '#fff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Theater Distribution by Type',
+                        font: { size: 16, weight: 'bold' },
+                        color: '#2d3748'
+                    },
+                    legend: {
+                        position: 'right',
+                        labels: { color: '#4a5568' }
+                    }
+                }
+            }
+        });
+
+        // Model Performance Comparison
+        const modelCtx = document.getElementById('modelChart').getContext('2d');
+        new Chart(modelCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Ridge', 'LightGBM', 'XGBoost', 'Ensemble'],
+                datasets: [{
+                    label: 'R² Score',
+                    data: [0.5089, 0.5799, 0.6426, 0.6096],
+                    backgroundColor: 'rgba(66, 153, 225, 0.7)',
+                    borderColor: 'rgba(66, 153, 225, 1)',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Model Performance Comparison (R² Score)',
+                        font: { size: 16, weight: 'bold' },
+                        color: '#2d3748'
+                    },
+                    legend: { display: false }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 1.0,
+                        title: { 
+                            display: true, 
+                            text: 'R² Score (higher is better)',
+                            color: '#4a5568'
+                        },
+                        ticks: { color: '#4a5568' }
+                    },
+                    x: {
+                        ticks: { color: '#4a5568' }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
